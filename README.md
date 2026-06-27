@@ -26,6 +26,16 @@ A shared group app to track things you want to try and collaboratively decide wh
 - JWT auth via httpOnly cookies, bcryptjs for passwords
 - `pg` for raw SQL queries
 
+## Deployment
+
+The app is deployed on **AWS ECS Fargate** so that server-side code can reach the RDS instance directly (Amplify Hosting doesn't support VPC placement for its Lambda functions).
+
+```
+Route 53 → ALB → ECS Fargate (Next.js, in VPC) → RDS (private subnet)
+```
+
+The Fargate task and RDS instance live in the same VPC — the task's security group is the only source allowed to connect to the RDS security group on port 5432. The Next.js app queries Postgres directly from Server Components and Route Handlers using `pg`, with no separate API layer needed.
+
 ## Getting Started
 
-Install dependencies, copy `.env.example` to `.env.local` and fill in your `DATABASE_URL` and `JWT_SECRET`, run the migration in `migrations/001_init.sql` against your RDS instance, then start the dev server with `npm run dev`.
+Install dependencies, copy `.env.example` to `.env.local` and fill in your `DATABASE_URL` and `JWT_SECRET`, run the migration in `db/migrations/001_init.sql` against your RDS instance, then start the dev server with `npm run dev`.
