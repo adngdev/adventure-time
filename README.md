@@ -38,4 +38,25 @@ The Fargate task and RDS instance live in the same VPC — the task's security g
 
 ## Getting Started
 
-Install dependencies, copy `.env.example` to `.env.local` and fill in your `DATABASE_URL` and `JWT_SECRET`, run the migration in `db/migrations/001_init.sql` against your RDS instance, then start the dev server with `npm run dev`.
+Make sure Docker Desktop is open and running, then:
+
+```bash
+# 1. start the db
+docker compose up -d
+
+# 2. copy env (first time only)
+cp .env.example .env.local
+
+# 3. run the migration
+psql postgresql://postgres:postgres@localhost:5432/adventure_time -f db/migrations/001_init.sql
+
+# 4. install dependencies and start the app
+pnpm install
+pnpm dev
+```
+
+If you don't have `psql` installed locally, run the migration through the container instead:
+
+```bash
+docker compose exec db psql -U postgres -d adventure_time -f /dev/stdin < db/migrations/001_init.sql
+```
