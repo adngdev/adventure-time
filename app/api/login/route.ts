@@ -1,5 +1,3 @@
-import { LoginFormValues } from "@/schemas/login";
-
 import pool from "@/db";
 import { sign } from "jsonwebtoken";
 import { User } from "@/types/user";
