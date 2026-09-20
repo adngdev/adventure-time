@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginSchema, type LoginFormValues } from "@/schemas/login";
+import { useRouter } from "next/navigation"
 
 export default function LoginPage() {
   const {
@@ -13,10 +14,27 @@ export default function LoginPage() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({ resolver: zodResolver(loginSchema) });
+  const router = useRouter();
 
   async function onSubmit(data: LoginFormValues) {
-    // TODO: call login API
-    console.log(data);
+    const response = await fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: data.email,
+        password: data.password
+      })
+    })
+    if (!response.ok) {
+      if (response.status == 401) {
+        console.error("Login failed - not authorised")
+        return
+      }
+    }
+    const result = await response.json()
+    router.push("/")
   }
 
   return (
