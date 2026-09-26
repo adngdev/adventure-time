@@ -4,7 +4,7 @@ import { verifyToken } from "./lib/token";
 
 const PUBLIC_ROUTES = ["/login"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isPublic = PUBLIC_ROUTES.includes(pathname)
   try {
