@@ -5,8 +5,8 @@ import bcrypt from "bcryptjs";
 
 export const DUMMY_HASH = bcrypt.hashSync("some dummy pw", 10)
 
-export const parseLoginData = (reqBody: JSON) => {
-    return loginSchema.safeParse(reqBody)?.data;
+export const parseLoginData = (reqBody: unknown) => {
+    return loginSchema.safeParse(reqBody);
 }
 
 export const getUser = async (email: string): Promise<User | undefined> => {
