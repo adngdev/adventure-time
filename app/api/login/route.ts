@@ -14,7 +14,7 @@ export const POST = async (request: NextRequest) => {
     if (!data) {
         return NextResponse.json("not valid info", {status: 401})
     }
-    const result = await pool.query<User>("select email, password_hash from users where email = $1", [data.email])
+    const result = await pool.query<User>("select * from users where email = $1", [data.email])
     const user = result.rows[0]
     if (!user) {
         return NextResponse.json("wrong user or password", {status: 401})
