@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parseLoginData, getUser, isCorrectPw } from "@/lib/auth";
-import { getSignedToken } from "@/lib/token";
+import { signToken } from "@/lib/token";
 
 export const POST = async (request: NextRequest) => {
     const data = parseLoginData(await request.json())
@@ -17,6 +17,6 @@ export const POST = async (request: NextRequest) => {
 
     const { password_hash, ...responseData } = user;
     const response = NextResponse.json("it worked", { status: 200 })
-    response.cookies.set("token", await getSignedToken(responseData), { httpOnly: true, maxAge: 60 * 60, secure: true, sameSite: "strict"})
+    response.cookies.set("token", await signToken(responseData), { httpOnly: true, maxAge: 60 * 60, secure: true, sameSite: "strict"})
     return response
 }

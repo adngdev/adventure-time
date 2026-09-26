@@ -1,23 +1,22 @@
 import { User } from "@/types/user";
 import { jwtVerify, SignJWT } from "jose";
-import { NextRequest } from "next/server";
 
-const ENCODED_SECRET = new TextEncoder().encode(process.env.JWT_SECRET)
+const secret = process.env.JWT_SECRET;
+if (!secret) throw new Error("jwt secret not set")
+const encodedSecret = new TextEncoder().encode(secret)
 
-export const getSignedToken = async (responseData: Partial<User>) => {
+type TokenPayload = { id: number, name: string, email: string, created_at: Date}
+
+export const signToken = async (responseData: TokenPayload) => {
     const token = await new SignJWT(responseData)
         .setProtectedHeader({ alg: "HS256"})
         .setIssuedAt()
         .setExpirationTime("1h")
-        .sign(ENCODED_SECRET)
+        .sign(encodedSecret)
     return token
 }
 
-export const retrieveToken = (request: NextRequest) => {
-    return new TextEncoder().encode(request.cookies.get("token")?.value);
-}
-
-export const verifyToken = async (request: NextRequest) => {
-    const verifiedToken = await jwtVerify(retrieveToken(request), ENCODED_SECRET)
+export const verifyToken = async (token: string) => {
+    const verifiedToken = await jwtVerify(new TextEncoder().encode(token), encodedSecret)
     return verifiedToken;
 }
