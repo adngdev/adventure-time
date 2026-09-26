@@ -16,9 +16,12 @@ export const POST = async (request: NextRequest) => {
     }
     const result = await pool.query<User>("select email, password_hash from users where email = $1", [data.email])
     const user = result.rows[0]
+    if (!user) {
+        return NextResponse.json("wrong user or password", {status: 401})
+    }
     // TODO: move this into its own method
     const isCorrectPw = await bcrypt.compare(data.password, user.password_hash) 
-    if (!user || !isCorrectPw) { 
+    if (!isCorrectPw) { 
         return NextResponse.json("wrong user or password", {status: 401});
     }
     const { password_hash, ...responseData } = user;
