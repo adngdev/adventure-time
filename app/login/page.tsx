@@ -31,9 +31,11 @@ export default function LoginPage() {
       if (response.status == 401) {
         console.error("Login failed - not authorised")
         return
+      } else {
+        console.error("Something went wrong")
+        return
       }
     }
-    const result = await response.json()
     router.push("/")
   }
 

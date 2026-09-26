@@ -1,5 +1,5 @@
 import pool from "@/db";
-import { sign } from "jsonwebtoken";
+import { SignJWT } from "jose"
 import { User } from "@/types/user";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
@@ -19,7 +19,11 @@ export const POST = async (request: NextRequest) => {
     }
     const { password_hash, ...responseData } = user;
 
-    const token = sign({ responseData }, secret, {expiresIn: '1h'} )
+    const token = await new SignJWT(responseData)
+        .setProtectedHeader({ alg: "HS256"})
+        .setIssuedAt()
+        .setExpirationTime("1h")
+        .sign(new TextEncoder().encode(secret))
     console.log("got token: ", token)
 
     const response = NextResponse.json("it worked", { status: 200 })
