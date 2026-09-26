@@ -3,9 +3,15 @@ import { parseLoginData, getUser, isCorrectPw } from "@/lib/auth";
 import { signToken } from "@/lib/token";
 
 export const POST = async (request: NextRequest) => {
-    const data = parseLoginData(await request.json())
+    let requestData;
+    try {
+        requestData = await request.json();
+    } catch (exception) {
+       return NextResponse.json("cant parse request", {status: 400}) 
+    }
+    const data = parseLoginData(requestData)
     if (!data) {
-        return NextResponse.json("not valid info", {status: 401})
+        return NextResponse.json("not valid login info", {status: 400})
     }
     const user = await getUser(data.email)
     if (!user) {
