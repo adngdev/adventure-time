@@ -12,6 +12,7 @@ export default function LoginPage() {
   const {
     control,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({ resolver: zodResolver(loginSchema) });
   const router = useRouter();
@@ -29,10 +30,10 @@ export default function LoginPage() {
     })
     if (!response.ok) {
       if (response.status == 401) {
-        console.error("Login failed - not authorised")
+        setError("root", { message: "Email or password is incorrect" })
         return
       } else {
-        console.error("Something went wrong")
+        setError("root", { message: "Something went wrong" })
         return
       }
     }
@@ -64,6 +65,7 @@ export default function LoginPage() {
           />
           {errors.password && <p className="text-destructive text-sm">{errors.password.message}</p>}
         </div>
+        {errors.root && <p role="alert" className="text-destructive text-sm">{errors.root.message}</p>}
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Signing in..." : "Sign in"}
         </Button>
