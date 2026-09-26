@@ -9,8 +9,9 @@ export const parseLoginData = (reqBody: JSON) => {
     return loginSchema.safeParse(reqBody)?.data;
 }
 
-export const getUser = async (email: ZodEmail): Promise<User> => {
-    return await pool.query<User>("select top 1 * from users where email = $1", [email])
+export const getUser = async (email: string): Promise<User | undefined> => {
+    const users = await pool.query<User>("select * from users where email = $1 limit 1", [email]) 
+    return users.rows[0]
 }
 
 export const isCorrectPw = async (password: string, password_hash: string) => {
