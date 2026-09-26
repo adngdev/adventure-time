@@ -1,7 +1,6 @@
-import { SignJWT } from "jose"
 import { NextRequest, NextResponse } from "next/server";
 import { parseLoginData, getUser, isCorrectPw } from "@/lib/auth";
-import { getEncodedSecret } from "@/lib/token";
+import { getSignedToken } from "@/lib/token";
 
 export const POST = async (request: NextRequest) => {
     const data = parseLoginData(await request.json())
@@ -15,16 +14,9 @@ export const POST = async (request: NextRequest) => {
     if (!await isCorrectPw(data.password, user.password_hash)) { 
         return NextResponse.json("wrong user or password", {status: 401});
     }
+
     const { password_hash, ...responseData } = user;
-
-    const token = await new SignJWT(responseData)
-        .setProtectedHeader({ alg: "HS256"})
-        .setIssuedAt()
-        .setExpirationTime("1h")
-        .sign(getEncodedSecret())
-
     const response = NextResponse.json("it worked", { status: 200 })
-    response.cookies.set("token", token, { httpOnly: true, maxAge: 60 * 60, secure: true, sameSite: "strict"})
+    response.cookies.set("token", await getSignedToken(responseData), { httpOnly: true, maxAge: 60 * 60, secure: true, sameSite: "strict"})
     return response
-
 }
