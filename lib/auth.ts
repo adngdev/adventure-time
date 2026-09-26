@@ -1,10 +1,8 @@
 import { loginSchema } from "@/schemas/login";
 import { User } from "@/types/user";
 import pool from "@/db";
-import { ZodEmail } from "zod/v4";
 import bcrypt from "bcryptjs";
 
-// for router and middleware to share
 export const parseLoginData = (reqBody: JSON) => {
     return loginSchema.safeParse(reqBody)?.data;
 }

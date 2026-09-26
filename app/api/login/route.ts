@@ -1,12 +1,9 @@
 import { SignJWT } from "jose"
 import { NextRequest, NextResponse } from "next/server";
 import { parseLoginData, getUser, isCorrectPw } from "@/lib/auth";
+import { getEncodedSecret } from "@/lib/token";
 
 export const POST = async (request: NextRequest) => {
-    const secret = process.env.JWT_SECRET
-    if (!secret) {
-        return NextResponse.json("you need a secret in order to sign jwt", {status: 500})
-    }
     const data = parseLoginData(await request.json())
     if (!data) {
         return NextResponse.json("not valid info", {status: 401})
@@ -24,7 +21,7 @@ export const POST = async (request: NextRequest) => {
         .setProtectedHeader({ alg: "HS256"})
         .setIssuedAt()
         .setExpirationTime("1h")
-        .sign(new TextEncoder().encode(secret))
+        .sign(getEncodedSecret())
 
     const response = NextResponse.json("it worked", { status: 200 })
     response.cookies.set("token", token, { httpOnly: true, maxAge: 60 * 60, secure: true, sameSite: "strict"})
