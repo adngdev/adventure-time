@@ -1,20 +1,24 @@
+import { jwtVerify } from "jose";
 import { NextRequest, NextResponse } from "next/server";
+
 
 const PUBLIC_ROUTES = ["/login"];
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
+  const secret = new TextEncoder().encode(process.env.JWT_SECRET)
   const { pathname } = request.nextUrl;
-  const token = request.cookies.get("token")?.value;
-  const isPublic = PUBLIC_ROUTES.includes(pathname);
-
-  if (!token && !isPublic) {
-    return NextResponse.redirect(new URL("/login", request.url));
+  const isPublic = PUBLIC_ROUTES.includes(pathname)
+  const token = new TextEncoder().encode(request.cookies.get("token")?.value);
+  try {
+    await jwtVerify(token, secret)
+    if (isPublic) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+  } catch (error) {
+      if (!isPublic) {
+        return NextResponse.redirect(new URL("/login", request.url));
+      }
   }
-
-  if (token && isPublic) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-
   return NextResponse.next();
 }
 
