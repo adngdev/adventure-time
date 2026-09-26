@@ -8,7 +8,7 @@ import { loginSchema } from "@/schemas/login";
 export const POST = async (request: NextRequest) => {
     const secret = process.env.JWT_SECRET
     if (!secret) {
-        throw "you need a secret in order to sign jwt"
+        return NextResponse.json("you need a secret in order to sign jwt", {status: 500})
     }
     const data = loginSchema.safeParse(await request.json())?.data;
     if (!data) {
@@ -31,7 +31,6 @@ export const POST = async (request: NextRequest) => {
         .setIssuedAt()
         .setExpirationTime("1h")
         .sign(new TextEncoder().encode(secret))
-    console.log("got token: ", token)
 
     const response = NextResponse.json("it worked", { status: 200 })
     response.cookies.set("token", token, { httpOnly: true, maxAge: 60 * 60, secure: true, sameSite: "strict"})
