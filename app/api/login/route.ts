@@ -1,8 +1,6 @@
 import { SignJWT } from "jose"
-import { User } from "@/types/user";
 import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import parseLoginData, { getUser, isCorrectPw } from "@/lib/auth";
+import { parseLoginData, getUser, isCorrectPw } from "@/lib/auth";
 
 export const POST = async (request: NextRequest) => {
     const secret = process.env.JWT_SECRET
