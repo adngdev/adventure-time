@@ -59,6 +59,4 @@ If you don't have `psql` installed locally, run the migration through the contai
 
 ```bash
 docker compose exec db psql -U postgres -d adventure_time -f /dev/stdin < db/migrations/001_init.sql
-
-
 ```
