@@ -1,27 +1,23 @@
-import pool from "@/db";
 import { SignJWT } from "jose"
 import { User } from "@/types/user";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { loginSchema } from "@/schemas/login";
+import parseLoginData, { getUser, isCorrectPw } from "@/lib/auth";
 
 export const POST = async (request: NextRequest) => {
     const secret = process.env.JWT_SECRET
     if (!secret) {
         return NextResponse.json("you need a secret in order to sign jwt", {status: 500})
     }
-    const data = loginSchema.safeParse(await request.json())?.data;
+    const data = parseLoginData(await request.json())
     if (!data) {
         return NextResponse.json("not valid info", {status: 401})
     }
-    const result = await pool.query<User>("select * from users where email = $1", [data.email])
-    const user = result.rows[0]
+    const user = await getUser(data.email)
     if (!user) {
         return NextResponse.json("wrong user or password", {status: 401})
     }
-    // TODO: move this into its own method
-    const isCorrectPw = await bcrypt.compare(data.password, user.password_hash) 
-    if (!isCorrectPw) { 
+    if (!await isCorrectPw(data.password, user.password_hash)) { 
         return NextResponse.json("wrong user or password", {status: 401});
     }
     const { password_hash, ...responseData } = user;
