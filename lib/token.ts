@@ -5,7 +5,7 @@ const secret = process.env.JWT_SECRET;
 if (!secret) throw new Error("jwt secret not set")
 const encodedSecret = new TextEncoder().encode(secret)
 
-type TokenPayload = { id: number, name: string, email: string, created_at: Date}
+type TokenPayload = { id: number, name: string, email: string, created_at: string}
 
 export const signToken = async (responseData: TokenPayload) => {
     const token = await new SignJWT(responseData)
