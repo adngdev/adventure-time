@@ -3,6 +3,8 @@ import { User } from "@/types/user";
 import pool from "@/db";
 import bcrypt from "bcryptjs";
 
+export const DUMMY_HASH = bcrypt.hashSync("some dummy pw", 10)
+
 export const parseLoginData = (reqBody: JSON) => {
     return loginSchema.safeParse(reqBody)?.data;
 }

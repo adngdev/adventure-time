@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { parseLoginData, getUser, isCorrectPw } from "@/lib/auth";
+import { parseLoginData, getUser, isCorrectPw, DUMMY_HASH } from "@/lib/auth";
 import { signToken } from "@/lib/token";
 
 export const POST = async (request: NextRequest) => {
@@ -14,7 +14,7 @@ export const POST = async (request: NextRequest) => {
         return NextResponse.json("not valid login info", {status: 400})
     }
     const user = await getUser(data.email)
-    if (!user || !(await isCorrectPw(data.password, user.password_hash)) ) {
+    if (!(await isCorrectPw(data.password, user ? user.password_hash : DUMMY_HASH)) ) {
         return NextResponse.json("wrong user or password", {status: 401})
     }
 
