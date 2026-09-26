@@ -14,11 +14,8 @@ export const POST = async (request: NextRequest) => {
         return NextResponse.json("not valid login info", {status: 400})
     }
     const user = await getUser(data.email)
-    if (!user) {
+    if (!user || !(await isCorrectPw(data.password, user.password_hash)) ) {
         return NextResponse.json("wrong user or password", {status: 401})
-    }
-    if (!await isCorrectPw(data.password, user.password_hash)) { 
-        return NextResponse.json("wrong user or password", {status: 401});
     }
 
     const { password_hash, ...responseData } = user;
