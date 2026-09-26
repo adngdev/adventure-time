@@ -9,7 +9,7 @@ export async function middleware(request: NextRequest) {
   const isPublic = PUBLIC_ROUTES.includes(pathname)
   try {
     const cookieToken = request.cookies.get("token")?.value
-    if (!cookieToken) return NextResponse.json("no token to grab from cookie", {status: 500})
+    if (!cookieToken) throw new Error("user needs to login, redirecting to login")
     await verifyToken(cookieToken)
     if (isPublic) {
       return NextResponse.redirect(new URL("/", request.url));
