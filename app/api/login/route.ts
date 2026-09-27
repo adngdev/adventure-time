@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parseLoginData, getUser, isCorrectPw, DUMMY_HASH } from "@/lib/auth";
-import { encryptToken, TOKEN_MAX_AGE_SECONDS } from "@/lib/token";
+import { signToken, TOKEN_MAX_AGE_SECONDS } from "@/lib/token";
 
 export const POST = async (request: NextRequest) => {
     let requestData;
@@ -20,6 +20,6 @@ export const POST = async (request: NextRequest) => {
     }
     const { password_hash, ...responseData } = user;
     const response = NextResponse.json("it worked", { status: 200 })
-    response.cookies.set("token", await encryptToken(responseData), { httpOnly: true, maxAge: TOKEN_MAX_AGE_SECONDS, secure: true, sameSite: "strict"})
+    response.cookies.set("token", await signToken(responseData), { httpOnly: true, maxAge: TOKEN_MAX_AGE_SECONDS, secure: true, sameSite: "strict"})
     return response
 }

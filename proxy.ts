@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { decryptToken } from "./lib/token";
+import { verifyToken } from "./lib/token";
 
 
 const PUBLIC_ROUTES = ["/login"];
@@ -10,7 +10,7 @@ export async function proxy(request: NextRequest) {
   try {
     const cookieToken = request.cookies.get("token")?.value
     if (!cookieToken) throw new Error("user needs to login, redirecting to login")
-    await decryptToken(cookieToken)
+    await verifyToken(cookieToken)
     if (isPublic) {
       return NextResponse.redirect(new URL("/", request.url));
     }
