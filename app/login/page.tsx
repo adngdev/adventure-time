@@ -6,17 +6,38 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginSchema, type LoginFormValues } from "@/schemas/login";
+import { useRouter } from "next/navigation"
 
 export default function LoginPage() {
   const {
     control,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({ resolver: zodResolver(loginSchema) });
+  const router = useRouter();
 
   async function onSubmit(data: LoginFormValues) {
-    // TODO: call login API
-    console.log(data);
+    const response = await fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: data.email,
+        password: data.password
+      })
+    })
+    if (!response.ok) {
+      if (response.status == 401) {
+        setError("root", { message: "Email or password is incorrect" })
+        return
+      } else {
+        setError("root", { message: "Something went wrong" })
+        return
+      }
+    }
+    router.push("/")
   }
 
   return (
@@ -44,6 +65,7 @@ export default function LoginPage() {
           />
           {errors.password && <p className="text-destructive text-sm">{errors.password.message}</p>}
         </div>
+        {errors.root && <p role="alert" className="text-destructive text-sm">{errors.root.message}</p>}
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Signing in..." : "Sign in"}
         </Button>
