@@ -25,6 +25,9 @@ export const POST = async (request: NextRequest) => {
         if (error instanceof BadRequestError || error instanceof UnauthorisedError) {
             return NextResponse.json({status: error.statusCode}) 
         }
+        else {
+            return NextResponse.json({status: 500})
+        }
     }         
  
 }
