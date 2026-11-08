@@ -1,13 +1,22 @@
+import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 
-import { DUMMY_HASH, getUser, isCorrectPw, parseLoginData } from "@/lib/auth";
 import { signToken, TOKEN_MAX_AGE_SECONDS } from "@/lib/token";
+import { loginSchema } from "@/schemas/login";
+import { getUser } from "@/services/user";
+
+const isCorrectPw = async (password: string, password_hash: string) => {
+  return await bcrypt.compare(password, password_hash);
+};
+
+// need this to make it so that incorrect pw is the same processing time as no account registered
+const DUMMY_HASH = bcrypt.hashSync("some dummy pw", 10);
 
 export const POST = async (request: NextRequest) => {
   let requestData;
   try {
     requestData = await request.json();
-    const parsed = parseLoginData(requestData);
+    const parsed = loginSchema.safeParse(requestData);
     if (!parsed.success) {
       return NextResponse.json({ status: 400 });
     }
