@@ -27,7 +27,7 @@ export const POST = async (request: NextRequest) => {
       secure: true,
       sameSite: "strict",
     });
-    return;
+    return response;
   } catch {
     return NextResponse.json({ status: 500 });
   }
