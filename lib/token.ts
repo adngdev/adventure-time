@@ -1,23 +1,26 @@
 import { jwtVerify, SignJWT } from "jose";
 
 const secret = process.env.JWT_SECRET;
-if (!secret) throw new Error("jwt secret not set")
-const encodedSecret = new TextEncoder().encode(secret)
+if (!secret) throw new Error("jwt secret not set");
+const encodedSecret = new TextEncoder().encode(secret);
 
-type TokenPayload = { id: number, name: string, email: string, created_at: Date}
+type TokenPayload = { name: string; email: string; created_at: Date };
 
 export const TOKEN_MAX_AGE_SECONDS = 60 * 60;
 
 export const signToken = async (responseData: TokenPayload) => {
-    const token = await new SignJWT(responseData)
-        .setProtectedHeader({ alg: "HS256"})
-        .setIssuedAt()
-        .setExpirationTime(`${TOKEN_MAX_AGE_SECONDS}s`)
-        .sign(encodedSecret)
-    return token
-}
+  const token = await new SignJWT(responseData)
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime(`${TOKEN_MAX_AGE_SECONDS}s`)
+    .sign(encodedSecret);
+  return token;
+};
 
 export const verifyToken = async (token: string) => {
-    const verifiedToken = await jwtVerify(new TextEncoder().encode(token), encodedSecret)
-    return verifiedToken;
-}
+  const verifiedToken = await jwtVerify(
+    new TextEncoder().encode(token),
+    encodedSecret,
+  );
+  return verifiedToken;
+};
