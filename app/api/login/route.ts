@@ -18,7 +18,7 @@ export const POST = async (request: NextRequest) => {
     requestData = await request.json();
     const parsed = loginSchema.safeParse(requestData);
     if (!parsed.success) {
-      return NextResponse.json({ status: 400 });
+      return NextResponse.json({ body: "Bad Request" }, { status: 400 });
     }
     const user = await getUser(parsed.data.email);
     const isValid = await isCorrectPw(
@@ -26,10 +26,10 @@ export const POST = async (request: NextRequest) => {
       user ? user.password_hash : DUMMY_HASH,
     );
     if (!user || !isValid) {
-      return NextResponse.json({ status: 401 });
+      return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
     }
     const { password_hash, ...responseData } = user;
-    const response = NextResponse.json({ status: 200 });
+    const response = NextResponse.json({ body: "OK" }, { status: 200 });
     response.cookies.set("token", await signToken(responseData), {
       httpOnly: true,
       maxAge: TOKEN_MAX_AGE_SECONDS,
@@ -38,6 +38,9 @@ export const POST = async (request: NextRequest) => {
     });
     return response;
   } catch {
-    return NextResponse.json({ status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 };
