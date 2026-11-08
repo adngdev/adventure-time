@@ -24,10 +24,7 @@ export default function LoginPage() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        email: data.email,
-        password: data.password,
-      }),
+      body: JSON.stringify(data),
     });
     if (!response.ok) {
       if (response.status == 401) {
