@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { parseLoginData, getUser, isCorrectPw, DUMMY_HASH } from "@/lib/auth";
+
+import { DUMMY_HASH, getUser, isCorrectPw, parseLoginData } from "@/lib/auth";
 import { signToken, TOKEN_MAX_AGE_SECONDS } from "@/lib/token";
-import { BadRequestError } from "@/types/errors/BadRequestError";
-import { UnauthorisedError } from "@/types/errors/UnauthorisedError";
 
 export const POST = async (request: NextRequest) => {
   let requestData;
@@ -10,7 +9,7 @@ export const POST = async (request: NextRequest) => {
     requestData = await request.json();
     const parsed = parseLoginData(requestData);
     if (!parsed.success) {
-      throw new BadRequestError();
+      return NextResponse.json({ status: 400 });
     }
     const user = await getUser(parsed.data.email);
     const isValid = await isCorrectPw(
@@ -18,7 +17,7 @@ export const POST = async (request: NextRequest) => {
       user ? user.password_hash : DUMMY_HASH,
     );
     if (!user || !isValid) {
-      throw new UnauthorisedError();
+      return NextResponse.json({ status: 401 });
     }
     const { password_hash, ...responseData } = user;
     const response = NextResponse.json({ status: 200 });
@@ -29,14 +28,7 @@ export const POST = async (request: NextRequest) => {
       sameSite: "strict",
     });
     return;
-  } catch (error) {
-    if (
-      error instanceof BadRequestError ||
-      error instanceof UnauthorisedError
-    ) {
-      return NextResponse.json({ status: error.statusCode });
-    } else {
-      return NextResponse.json({ status: 500 });
-    }
+  } catch {
+    return NextResponse.json({ status: 500 });
   }
 };
