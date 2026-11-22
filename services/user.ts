@@ -2,7 +2,7 @@ import db from "@/db";
 import { User } from "@/types/user";
 
 export const getUser = async (email: string): Promise<User | undefined> => {
-  const getUserStatement = db.prepare(
+  const getUserStatement = db.prepare<string, User>(
     "select * from users where email = @email limit 1",
   );
 
