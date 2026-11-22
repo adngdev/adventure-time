@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,8 @@ export default function NewWishlistItemPage() {
     resolver: zodResolver(newWishlistItemSchema),
   });
 
+  const router = useRouter();
+
   async function onSubmit(data: NewWishlistItemFormValues) {
     const response = await fetch("/api/wishlist-item/create", {
       method: "POST",
@@ -29,10 +32,10 @@ export default function NewWishlistItemPage() {
       },
       body: JSON.stringify(data),
     });
-
     if (!response.ok) {
       setError("root", { message: "Wishlist item could not be created." });
     }
+    router.push("/");
   }
 
   return (
