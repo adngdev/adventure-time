@@ -22,9 +22,8 @@ A shared group app to track things you want to try and collaboratively decide wh
 
 - Next.js 14 (App Router, TypeScript)
 - Tailwind CSS
-- PostgreSQL on AWS RDS
 - JWT auth via httpOnly cookies, bcryptjs for passwords
-- `pg` for raw SQL queries
+- Sqlite db
 
 ## Deployment
 
@@ -38,25 +37,19 @@ The Fargate task and RDS instance live in the same VPC — the task's security g
 
 ## Getting Started
 
-Make sure Docker Desktop is open and running, then:
+# 1. copy env (first time only)
 
-```bash
-# 1. start the db
-docker compose up -d
-
-# 2. copy env (first time only)
 cp .env.example .env.local
 
-# 3. run the migration
-psql postgresql://postgres:postgres@localhost:5432/adventure_time -f db/migrations/001_init.sql
+# 2. run the migration
 
-# 4. install dependencies and start the app
+sqlite3 adventure-time.db < db/migrations/001_init.sql
+
+# 3. install dependencies and start the app
+
 pnpm install
 pnpm dev
+
 ```
 
-If you don't have `psql` installed locally, run the migration through the container instead:
-
-```bash
-docker compose exec db psql -U postgres -d adventure_time -f /dev/stdin < db/migrations/001_init.sql
 ```

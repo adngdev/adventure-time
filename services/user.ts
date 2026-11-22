@@ -1,10 +1,10 @@
-import pool from "@/db";
+import db from "@/db";
 import { User } from "@/types/user";
 
 export const getUser = async (email: string): Promise<User | undefined> => {
-  const users = await pool.query<User>(
-    "select * from users where email = $1 limit 1",
-    [email],
+  const getUserStatement = db.prepare(
+    "select * from users where email = @email limit 1",
   );
-  return users.rows[0];
+
+  return getUserStatement.get(email);
 };
