@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,6 +36,7 @@ export default function NewWishlistItemPage() {
     if (!response.ok) {
       setError("root", { message: "Wishlist item could not be created." });
     }
+    toast.success("Wishlist item added!");
     router.push("/");
   }
 

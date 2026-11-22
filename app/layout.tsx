@@ -1,9 +1,15 @@
-import type { Metadata } from "next";
-import { Poppins, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+
+import type { Metadata } from "next";
+import { JetBrains_Mono, Poppins } from "next/font/google";
+
+import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 
-const jetbrainsMono = JetBrains_Mono({subsets:['latin'],variable:'--font-mono'});
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+});
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -24,14 +30,21 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", poppins.variable, "font-mono", jetbrainsMono.variable)}
+      className={cn(
+        "h-full",
+        "antialiased",
+        poppins.variable,
+        "font-mono",
+        jetbrainsMono.variable,
+      )}
     >
       <body className="min-h-full flex flex-col">
-          <div className="px-6 py-4">
-            <p className="text-center font-semibold text-lg">Adventure Time</p>
-          </div>
-          {children}
-        </body>
+        <div className="px-6 py-4">
+          <p className="text-center font-semibold text-lg">Adventure Time</p>
+        </div>
+        {children}
+        <Toaster />
+      </body>
     </html>
   );
 }
