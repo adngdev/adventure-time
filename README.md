@@ -47,9 +47,7 @@ sqlite3 adventure-time.db < db/migrations/001_init.sql
 
 # 3. install dependencies and start the app
 
+```
 pnpm install
 pnpm dev
-
-```
-
 ```
