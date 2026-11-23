@@ -26,7 +26,7 @@ export default function NewWishlistItemPage() {
   const router = useRouter();
 
   async function onSubmit(data: NewWishlistItemFormValues) {
-    const response = await fetch("/api/wishlist-item/create", {
+    const response = await fetch("/api/wishlist-items/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -37,7 +37,7 @@ export default function NewWishlistItemPage() {
       setError("root", { message: "Wishlist item could not be created." });
     }
     toast.success("Wishlist item added!");
-    router.push("/");
+    router.push("/wishlistItems");
   }
 
   return (
